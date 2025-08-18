@@ -1,0 +1,6 @@
+requests>=2.32.0
+PyYAML>=6.0.1
+openai>=1.40.0
+jsonschema>=4.22.0
+python-dateutil>=2.9.0.post0
+python-dotenv>=1.0.1

@@ -1,0 +1,26 @@
+release:
+  title: 'August Release'
+repos:
+  - owner: maple-labs
+    name: maple-api
+    since_ref: 'prod-mainnet-v3.24.98'
+    until_ref: 'v3.24.102'
+  - owner: maple-labs
+    name: hq
+    since_ref: 'prod-mainnet-v0.0.12'
+    until_ref: 'd73b73f3e6459e94f25600ce4807f3640fd467bd'
+  # Example using a date window instead of tags for an individual repo
+  # - owner: acme
+  #   name: mobile
+  #   since_date: '2025-07-01'
+llm:
+  provider: openai
+  model: gpt-4o-mini # gpt-5-mini-2025-08-07
+  max_tokens: 2000
+  temperature: 0.2
+github:
+  token_env: GITHUB_TOKEN
+render:
+  outfile: RELEASE_NOTES.md
+  sort_by_area: true
+  include_contributors: true
