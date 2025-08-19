@@ -24,9 +24,9 @@ class RepoSpec:
 @dataclass
 class LLMConfig:
     provider: str = "openai"
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-5"
     max_tokens: int = 2000
-    temperature: float = 0.2
+    temperature: float = 1
     api_key_env: str = "OPENAI_API_KEY"
 
     def get_api_key(self) -> str:

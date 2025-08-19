@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 import json
 import os
 import time
@@ -24,6 +24,7 @@ SYSTEM_PROMPT = (
     "First, produce tldr as 2–4 bullets summarizing the main focus areas of the week based on category frequencies and recurring area/* labels across repos."
 )
 
+OVERRIDE_USER_MESSAGE = ""
 
 def build_user_message(snapshots: List[Dict[str, Any]], since_ref: str, until_ref: str) -> str:
     # snapshots: list of { repo: "owner/repo", prs: [ ...compact json... ] }
@@ -75,11 +76,8 @@ def _has_minimal_content(doc: Dict[str, Any]) -> bool:
 def _coerce_legacy(doc: Dict[str, Any]) -> Dict[str, Any]:
     # Legacy shape example: { "Features": [ {"title": ..., "url": ...}, ...], "Fixes": [...] }
     CATEGORY_TITLES = [
-        "Breaking Changes",
         "Features",
         "Fixes",
-        "Performance",
-        "Docs",
         "Chore",
     ]
     keys = set(doc.keys()) if isinstance(doc, dict) else set()
@@ -124,13 +122,21 @@ def _coerce_legacy(doc: Dict[str, Any]) -> Dict[str, Any]:
     return coerced
 
 
-def consolidate_openai(snapshots: List[Dict[str, Any]], since_ref: str, until_ref: str, model: str, temperature: float) -> Dict[str, Any]:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY not set")
-    client = OpenAI(api_key=api_key)
+def consolidate_openai(
+    snapshots: List[Dict[str, Any]],
+    since_ref: str,
+    until_ref: str,
+    model: str,
+    temperature: float,
+    api_key: Optional[str] = None,
+    use_override: bool = False,
+) -> Dict[str, Any]:
+    key = api_key or os.getenv("OPENAI_API_KEY")
+    if not key:
+        raise RuntimeError("OPENAI_API_KEY not set and no api_key provided")
+    client = OpenAI(api_key=key)
 
-    user_msg = build_user_message(snapshots, since_ref, until_ref)
+    user_msg = OVERRIDE_USER_MESSAGE if use_override else build_user_message(snapshots, since_ref, until_ref)
     log.debug("LLM request prepared: model=%s, user_msg_chars=%d", model, len(user_msg))
     log.debug("LLM System prompt:\n%s", SYSTEM_PROMPT)
     log.debug("LLM User message:\n%s", user_msg)
