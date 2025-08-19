@@ -124,7 +124,7 @@ def _coerce_legacy(doc: Dict[str, Any]) -> Dict[str, Any]:
     return coerced
 
 
-def consolidate_openai(snapshots: List[Dict[str, Any]], since_ref: str, until_ref: str, model: str) -> Dict[str, Any]:
+def consolidate_openai(snapshots: List[Dict[str, Any]], since_ref: str, until_ref: str, model: str, temperature: float) -> Dict[str, Any]:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY not set")
@@ -139,7 +139,7 @@ def consolidate_openai(snapshots: List[Dict[str, Any]], since_ref: str, until_re
         log.info("LLM consolidate attempt %d (model=%s)", attempt + 1, model)
         resp = client.chat.completions.create(
             model=model,
-            temperature=0.2,
+            temperature=temperature,
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},

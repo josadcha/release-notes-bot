@@ -126,7 +126,7 @@ def main() -> int:
     until_display = next(iter(until_vals)) if len(until_vals) == 1 else ("per-repo" if until_vals else (args.until_ref or "HEAD"))
 
     log.info("Consolidating with model=%s; window: %s -> %s", cfg.llm.model, since_display, until_display)
-    llm_out = consolidate_openai(snapshots, since_display, until_display, cfg.llm.model)
+    llm_out = consolidate_openai(snapshots, since_display, until_display, cfg.llm.model, cfg.llm.temperature)
 
     # enrich with title
     llm_out_with_title = {**llm_out, "title": cfg.release.title}
