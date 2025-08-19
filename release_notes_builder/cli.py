@@ -10,6 +10,7 @@ from .github_fetcher import GitHubFetcher
 from .preclass import classify, summarize_for_llm
 from .llm_consolidator import consolidate_openai
 from .renderer import render_md
+from .shortcut_fetcher import ShortcutFetcher
 
 
 log = logging.getLogger(__name__)
@@ -100,6 +101,7 @@ def main() -> int:
         log.info("--llm-only mode: skipping GitHub fetching; using hardwired USER_MESSAGE in consolidator")
     else:
         gh = GitHubFetcher(cfg.github.get_token())
+        sc = ShortcutFetcher(cfg.shortcut.get_token())
 
         for r in repos:
             log.info("Fetching PRs for %s (since_ref=%s, until_ref=%s, since_date=%s)", r.full_name, r.since_ref, r.until_ref or args.until_ref, r.since_date or args.since_date)
@@ -111,6 +113,17 @@ def main() -> int:
                 r.since_date or args.since_date,
             )
             log.info("Fetched %d merged PRs for %s", len(prs), r.full_name)
+            # Enrich with Shortcut if available
+            if sc.enabled:
+                for p in prs:
+                    sid = sc.extract_story_id(p.title, p.body_excerpt)
+                    if sid:
+                        story = sc.get_story(sid)
+                        if story:
+                            p.shortcut_id = story.id
+                            p.shortcut_name = story.name
+                            p.shortcut_url = story.app_url
+                            p.shortcut_description = story.description
             classified = [classify(p) for p in prs]
             # quick category counts
             counts = Counter([c.category for c in classified])

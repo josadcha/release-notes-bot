@@ -2,24 +2,34 @@ release:
   title: 'August Release'
 repos:
   - owner: maple-labs
+    name: maple-subgraph
+    since_ref: 'prod-mainnet-v2.5.29'
+    until_ref: 'prod-mainnet-v2.5.30'
+  - owner: maple-labs
     name: maple-api
     since_ref: 'prod-mainnet-v3.24.98'
-    until_ref: 'v3.24.102'
+    until_ref: 'prod-mainnet-v3.24.104'
   - owner: maple-labs
     name: hq
     since_ref: 'prod-mainnet-v0.0.12'
-    until_ref: 'd73b73f3e6459e94f25600ce4807f3640fd467bd'
+    until_ref: 'prod-mainnet-v0.0.14'
+  - owner: maple-labs
+    name: ya-webapp
+    since_ref: 'prod-mainnet-webapp-v2.1.13'
+    until_ref: 'prod-mainnet-webapp-v2.1.14'
   # Example using a date window instead of tags for an individual repo
   # - owner: acme
   #   name: mobile
   #   since_date: '2025-07-01'
 llm:
   provider: openai
-  model: gpt-4o-mini # gpt-5-mini-2025-08-07
+  model: gpt-5-mini-2025-08-07 # gpt-5-mini-2025-08-07
   max_tokens: 2000
-  temperature: 0.2
+  temperature: 1
 github:
   token_env: GITHUB_TOKEN
+shortcut:
+  token_env: SHORTCUT_TOKEN # optional; if set, PRs will be enriched with Shortcut story details
 render:
   outfile: RELEASE_NOTES.md
   sort_by_area: true

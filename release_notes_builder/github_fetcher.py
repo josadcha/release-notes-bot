@@ -23,6 +23,11 @@ class PR:
     merge_sha: Optional[str]
     merged_at: Optional[str]
     changed_files: Optional[int] = None
+    # Optional Shortcut enrichment
+    shortcut_id: Optional[int] = None
+    shortcut_name: Optional[str] = None
+    shortcut_url: Optional[str] = None
+    shortcut_description: Optional[str] = None
 
 
 class GitHubFetcher:

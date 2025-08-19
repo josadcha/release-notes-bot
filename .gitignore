@@ -54,7 +54,6 @@ Thumbs.db
 
 # Environment files
 .env
-.env.*
 
 # Release notes
 RELEASE_NOTES.md

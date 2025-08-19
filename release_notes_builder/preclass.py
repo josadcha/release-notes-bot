@@ -82,7 +82,7 @@ def classify(pr: PR) -> ClassifiedPR:
 def summarize_for_llm(classified: List[ClassifiedPR]) -> List[Dict]:
     out = []
     for c in classified:
-        out.append({
+        item = {
             "number": c.pr.number,
             "title": c.pr.title,
             "labels": list(c.pr.labels or []),
@@ -92,5 +92,16 @@ def summarize_for_llm(classified: List[ClassifiedPR]) -> List[Dict]:
             "category": c.category,
             "area": c.area,
             "is_breaking": c.is_breaking,
-        })
+        }
+        # Optional Shortcut enrichment
+        if getattr(c.pr, "shortcut_id", None):
+            item.update({
+                "shortcut": {
+                    "id": c.pr.shortcut_id,
+                    "name": getattr(c.pr, "shortcut_name", None),
+                    "url": getattr(c.pr, "shortcut_url", None),
+                    "description": getattr(c.pr, "shortcut_description", None),
+                }
+            })
+        out.append(item)
     return out

@@ -48,6 +48,15 @@ class GitHubConfig:
 
 
 @dataclass
+class ShortcutConfig:
+    token_env: str = "SHORTCUT_TOKEN"
+
+    def get_token(self) -> Optional[str]:
+        # Shortcut integration is optional; return None if not configured
+        return os.getenv(self.token_env)
+
+
+@dataclass
 class RenderConfig:
     outfile: str = "RELEASE_NOTES.md"
     sort_by_area: bool = True
@@ -67,6 +76,7 @@ class Config:
     repos: List[RepoSpec] = field(default_factory=list)
     llm: LLMConfig = field(default_factory=LLMConfig)
     github: GitHubConfig = field(default_factory=GitHubConfig)
+    shortcut: ShortcutConfig = field(default_factory=ShortcutConfig)
     render: RenderConfig = field(default_factory=RenderConfig)
 
 
@@ -83,6 +93,7 @@ def load_config(path: Optional[str]) -> Config:
 
     llm = LLMConfig(**(data.get("llm") or {}))
     github = GitHubConfig(**(data.get("github") or {}))
+    shortcut = ShortcutConfig(**(data.get("shortcut") or {}))
     render = RenderConfig(**(data.get("render") or {}))
 
-    return Config(release=release, repos=repos, llm=llm, github=github, render=render)
+    return Config(release=release, repos=repos, llm=llm, github=github, shortcut=shortcut, render=render)
